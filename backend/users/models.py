@@ -6,14 +6,14 @@ from django.db import models
 
 class User(AbstractUser):
 
-    email = models.EmailField('Электронная почта', unique=True)
-    password = models.CharField('Пароль', max_length=150, blank=True)
-    # bio = models.TextField('Биография', blank=True)
-    # role = models.CharField('Тип пользователя', max_length=20,
-    #                         choices=ROLES, default=USER)
+    email = models.EmailField(unique=True)
+    # username = models.TextField('Юзернейм')
+    # first_name = models.TextField('Имя')
+    # last_name = models.TextField('Фамилия')
+    # password = models.TextField('Пароль')
 
-    # USERNAME_FIELD = 'email'
-    # REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     # def __str__(self):
     #     return self.username[:USERNAME_CHARACTERS]
