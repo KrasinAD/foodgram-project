@@ -18,6 +18,29 @@ class User(AbstractUser):
     # def __str__(self):
     #     return self.username[:USERNAME_CHARACTERS]
 
-    # class Meta:
-    #     verbose_name = 'Пользователь'
-    #     verbose_name_plural = 'Пользователи'
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='followings',
+    )
+
+    class Meta:
+        verbose_name = 'Подписчик'
+        verbose_name_plural = 'Подписчики'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_user_author'
+            )
+        ]

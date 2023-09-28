@@ -1,6 +1,7 @@
 
 # from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, mixins, permissions, status, viewsets
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
@@ -13,7 +14,7 @@ from django.shortcuts import get_object_or_404
 # from .filters import TitlesFilter
 # from .permissions import (IsAdmin, IsAdminOrReadOnly,
 #                           IsAuthorModerAdminOrReadOnly)
-from .serializers import IngredientSerializer, TagSerializer
+from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
 
 
 class ListRetrieveViewSet(mixins.ListModelMixin, 
@@ -28,7 +29,7 @@ class TagViewSet(ListRetrieveViewSet):
     # search_fields = ('name',)
     serializer_class = TagSerializer
     # pagination_class = LimitOffsetPagination
-    # permission_classes = (AllowAny,)
+    permission_classes = (AllowAny,)
     # lookup_field = 'slug'
 
 
@@ -38,5 +39,9 @@ class IngredientViewSet(ListRetrieveViewSet):
     # search_fields = ('name',)
     serializer_class = IngredientSerializer
     # pagination_class = LimitOffsetPagination
-    # permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (AllowAny,)
     # lookup_field = 'slug'
+
+class RecipesViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer

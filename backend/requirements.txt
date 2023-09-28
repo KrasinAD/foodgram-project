@@ -2,3 +2,4 @@ Python==3.10.12
 Django==4.2.4
 djangorestframework==3.14.0
 webcolors==1.13
+Pillow==10.0.1
