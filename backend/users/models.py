@@ -1,5 +1,3 @@
-# from foodgram.settings import USERNAME_CHARACTERS
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -15,8 +13,8 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    # def __str__(self):
-    #     return self.username[:USERNAME_CHARACTERS]
+    def __str__(self):
+        return self.username
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -29,10 +27,10 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='follower',
     )
-    author = models.ForeignKey(
+    following = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='followings',
+        related_name='following',
     )
 
     class Meta:
@@ -40,7 +38,7 @@ class Follow(models.Model):
         verbose_name_plural = 'Подписчики'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_user_author'
+                fields=['user', 'following'],
+                name='unique_follow'
             )
         ]

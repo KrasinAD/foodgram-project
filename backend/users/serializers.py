@@ -2,13 +2,12 @@ from djoser.serializers import UserSerializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 
-from api.serializers import SubscriptionRecipeSerializer
 from recipes.models import Recipe
 from users.models import Follow, User
 
 
 class CustomUserSerializer(UserSerializer):
-    """Кастомный серилизатор для User добавляет подписки."""
+    """Кастомный серилизатор для User добавляет строчку подписки."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -21,53 +20,61 @@ class CustomUserSerializer(UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Follow.objects.filter(user=user, author=obj.id).exists()
+        return Follow.objects.filter(user=user, following=obj.id).exists()
  
 
 class FollowSerializer(serializers.ModelSerializer):
-    """Серилизатор для модели Follow."""
-    email = serializers.ReadOnlyField(source='author.email')
-    id = serializers.ReadOnlyField(source='author.id')
-    username = serializers.ReadOnlyField(source='author.username')
-    first_name = serializers.ReadOnlyField(source='author.first_name')
-    last_name = serializers.ReadOnlyField(source='author.last_name')
+    """Серилизатор User для подписок."""
+    email = serializers.ReadOnlyField(source='following.email')
+    id = serializers.ReadOnlyField(source='following.id')
+    username = serializers.ReadOnlyField(source='following.username')
+    first_name = serializers.ReadOnlyField(source='following.first_name')
+    last_name = serializers.ReadOnlyField(source='following.last_name')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Follow
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count')
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
             return Follow.objects.filter(
                 user=obj.user,
-                author=obj.author).exists()
+                following=obj.following).exists()
         return False
 
     def get_recipes(self, obj):
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
-        recipes = Recipe.objects.filter(author=obj.author)
+        recipes = Recipe.objects.filter(author=obj.following)
         if limit and limit.isdigit():
             recipes = recipes[:int(limit)]
         return SubscriptionRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
+        return Recipe.objects.filter(author=obj.following).count()
 
     def validate(self, data):
-        author = self.context.get('author')
+        following = self.context.get('following')
         user = self.context.get('request').user
-        if Follow.objects.filter(author=author, user=user).exists():
+        if Follow.objects.filter(following=following, user=user).exists():
             raise ValidationError(
                 detail='Вы уже подписаны на этого пользователя!',
                 code=status.HTTP_400_BAD_REQUEST)
-        if user == author:
+        if user == following:
             raise ValidationError(
                 detail='Невозможно подписаться на себя!',
                 code=status.HTTP_400_BAD_REQUEST)
         return data
+
+
+class SubscriptionRecipeSerializer(serializers.ModelSerializer):
+    """Серилизатор для отображения рецептов в подписках."""
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')

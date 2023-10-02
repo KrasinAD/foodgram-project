@@ -18,7 +18,7 @@ class UserAdmin(admin.ModelAdmin):
 class FollowAdmin(admin.ModelAdmin):
     list_display = (
         'user',
-        'author',
+        'following',
     )
 
 
