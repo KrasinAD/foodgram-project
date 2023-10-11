@@ -7,7 +7,7 @@ from users.models import Follow, User
 
 
 class CustomUserSerializer(UserSerializer):
-    """Кастомный серилизатор для User добавляет строчку подписки."""
+    """Кастомный серилизатор для User, добавляет строчку подписки."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -53,7 +53,7 @@ class FollowSerializer(serializers.ModelSerializer):
         recipes = Recipe.objects.filter(author=obj.following)
         if limit and limit.isdigit():
             recipes = recipes[:int(limit)]
-        return SubscriptionRecipeSerializer(recipes, many=True).data
+        return MiniRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.following).count()
@@ -72,8 +72,9 @@ class FollowSerializer(serializers.ModelSerializer):
         return data
 
 
-class SubscriptionRecipeSerializer(serializers.ModelSerializer):
-    """Серилизатор для отображения рецептов в подписках."""
+class MiniRecipeSerializer(serializers.ModelSerializer):
+    """Серилизатор для отображения рецептов в подписках, избранном и 
+    списке покупок."""
 
     class Meta:
         model = Recipe

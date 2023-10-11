@@ -8,11 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 NAME_LENGTH = 200
 
 
-SECRET_KEY = 'django-insecure-c1lfspac^9f+h$m$=uq2lol(g162k2)&upj!oe8238c6g%0**b'
+SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1 localhost').split()
 
 
 INSTALLED_APPS = [
@@ -23,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'rest_framework.authtoken',
     'djoser',
     'users.apps.UsersConfig',
@@ -120,9 +122,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 6,
+    # 'DEFAULT_PAGINATION_CLASS':
+    #     'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 6,
 }
 
 AUTH_USER_MODEL = 'users.User'

@@ -191,3 +191,58 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 #                 raise exceptions.ValidationError('Вы не подписаны на этого пользователя.')
 #             Follow.objects.filter(user=user, author=author).delete()
 #             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# class RecipeViewSet(viewsets.ModelViewSet):
+#     queryset = Recipe.objects.all()
+#     serializer_class = RecipeSerializer
+#     http_method_names = ('get', 'post', 'patch', 'delete')
+#     filter_backends = (DjangoFilterBackend,)
+#     filterset_class = RecipeFilter
+#     pagination_class = CustomPagination
+#     permission_classes = (AuthorOrReadOnly,)
+
+#     def get_serializer_class(self):
+#         if self.request.method in permissions.SAFE_METHODS:
+#             return RecipeSerializer
+#         return RecipeWriteSerializer
+
+#     @action(
+#         detail=True,
+#         methods=['post', 'delete'],
+#         permission_classes=[permissions.IsAuthenticated]
+#     )
+#     def favorite(self, request, pk):
+#         if request.method == 'POST':
+#             return add_to(self, Favorite, request.user, pk)
+#         return delete_from(self, Favorite, request.user, pk)
+
+#     @action(
+#         detail=True,
+#         methods=['post', 'delete'],
+#         permission_classes=[permissions.IsAuthenticated]
+#     )
+#     def shopping_cart(self, request, pk):
+#         if request.method == 'POST':
+#             return add_to(self, ShoppingCart, request.user, pk)
+#         return delete_from(self, ShoppingCart, request.user, pk)
+    
+
+
+# def add_to(self, model, user, pk):
+#     if model.objects.filter(user=user, recipe__id=pk).exists():
+#         return Response({'error': 'Уже существует'},
+#                         status=status.HTTP_400_BAD_REQUEST)
+#     recipe = get_object_or_404(Recipe, pk=pk)
+#     instance = model.objects.create(user=user, recipe=recipe)
+#     serializer = FavoriteSerializer(instance)
+#     return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
+# def delete_from(self, model, user, pk):
+#     if model.objects.filter(user=user, recipe__id=pk).exists():
+#         model.objects.filter(
+#             user=user, recipe__id=pk
+#         ).delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+#     return Response(status=status.HTTP_400_BAD_REQUEST)

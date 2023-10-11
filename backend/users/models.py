@@ -6,8 +6,8 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     # username = models.TextField('Юзернейм')
-    # first_name = models.TextField('Имя')
-    # last_name = models.TextField('Фамилия')
+    first_name = models.TextField('Имя', max_length=150)
+    last_name = models.TextField('Фамилия', max_length=150)
     # password = models.TextField('Пароль')
 
     USERNAME_FIELD = 'email'
@@ -24,21 +24,26 @@ class User(AbstractUser):
 class Follow(models.Model):
     user = models.ForeignKey(
         User,
+        verbose_name='Подписчик',
         on_delete=models.CASCADE,
         related_name='follower',
     )
     following = models.ForeignKey(
         User,
+        verbose_name='Автор',
         on_delete=models.CASCADE,
         related_name='following',
     )
 
     class Meta:
-        verbose_name = 'Подписчик'
-        verbose_name_plural = 'Подписчики'
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'following'],
                 name='unique_follow'
             )
         ]
+
+    def __str__(self):
+        return f'{self.user} подписан на {self.following}'
