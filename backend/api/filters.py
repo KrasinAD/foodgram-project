@@ -2,16 +2,16 @@ from django_filters.rest_framework import FilterSet, filters
 # from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Recipe, User, Tag
+from recipes.models import Recipe, Tag, User
 
 
 class IngredientSearchFilter(SearchFilter):
-    """Замена параметра поиска ингредиентов по названию."""
+    """ Замена параметра поиска ингредиентов по названию. """
     search_param = 'name'
 
 
 class RecipeFilter(FilterSet):
-    """Кастомный фильтр для рецептов."""
+    """ Кастомный фильтр для рецептов. """
     author = filters.ModelChoiceFilter(
         queryset=User.objects.all()
     )

@@ -1,15 +1,14 @@
-from foodgram.settings import NAME_LENGTH
 from django.core.validators import MinValueValidator
-from users.models import User
-
 from django.db import models
+
+from users.models import User
 
 
 class Tag(models.Model):
-    """Модель Тега"""
+    """ Модель Тегов. """
     name = models.CharField(
         'Название',
-        max_length=NAME_LENGTH,
+        max_length=200,
         unique=True,
         db_index=True,
     )
@@ -20,7 +19,7 @@ class Tag(models.Model):
     )
     slug = models.SlugField(
         'Уникальный слаг',
-        max_length=NAME_LENGTH,
+        max_length=200,
         unique=True,
     )
 
@@ -33,15 +32,15 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    """Модель ингредиентов"""
+    """ Модель ингредиентов. """
     name = models.CharField(
         'Название',
-        max_length=NAME_LENGTH,
+        max_length=200,
         db_index=True,
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=NAME_LENGTH
+        max_length=200
     )
 
     def __str__(self):
@@ -53,11 +52,10 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    """Модель рецептов"""
+    """ Модель рецептов. """
     name = models.CharField(
         'Название',
-        max_length=NAME_LENGTH,
-        # db_index=True,
+        max_length=200,
     )
     text = models.TextField(
         'Описание',
@@ -88,7 +86,7 @@ class Recipe(models.Model):
         verbose_name='Тег'
     )
     pub_date = models.DateTimeField(
-        'Дата публикации', 
+        'Дата публикации',
         auto_now_add=True
     )
 
@@ -118,9 +116,9 @@ class IngredientRecipe(models.Model):
     amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
         validators=[MinValueValidator(
-            1, 
+            1,
             'Минимальное количество ингредиента в рецепте'
-        ),]  
+        ),]
     )
 
     class Meta:
@@ -135,7 +133,7 @@ class IngredientRecipe(models.Model):
 
 
 class Favorite(models.Model):
-    """Модель избранных рецептов."""
+    """ Модель избранных рецептов. """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -161,6 +159,7 @@ class Favorite(models.Model):
 
 
 class ShoppingCart(models.Model):
+    """ Модель списка покупок. """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -183,4 +182,3 @@ class ShoppingCart(models.Model):
                 name='unique_shopping'
             )
         ]
-

@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-
+    """ Модель Юзер. """
     email = models.EmailField(unique=True)
     first_name = models.TextField('Имя', max_length=150)
     last_name = models.TextField('Фамилия', max_length=150)
@@ -20,6 +20,7 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
+    """ Модель подписок. """
     user = models.ForeignKey(
         User,
         verbose_name='Подписчик',

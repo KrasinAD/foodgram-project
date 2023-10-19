@@ -5,14 +5,14 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-
-from users.serializers import FollowSerializer, FollowListSerializer, CustomUserSerializer
-from users.models import Follow, User
+from .models import Follow, User
+from .serializers import (CustomUserSerializer, FollowListSerializer,
+                          FollowSerializer)
 from api.pagination import CustomPagination
 
-   
+
 class CustomUserViewSet(UserViewSet):
-    """Вьюсет для пользователей и подписок на них."""
+    """ Вьюсет для пользователей и подписок на них. """
 
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
@@ -23,7 +23,6 @@ class CustomUserViewSet(UserViewSet):
         methods=['GET'],
         permission_classes=[IsAuthenticated],
     )
-
     def subscriptions(self, request):
         followings = User.objects.filter(following__user=self.request.user)
         paginated_followings = self.paginate_queryset(followings)
@@ -34,13 +33,11 @@ class CustomUserViewSet(UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
-
     @action(
         detail=True,
         methods=('post', 'delete'),
         permission_classes=[IsAuthenticated],
     )
-
     def subscribe(self, request, id):
         user = self.request.user
         following = get_object_or_404(User, id=id)

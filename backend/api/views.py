@@ -1,38 +1,37 @@
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum
-from rest_framework import generics, mixins, permissions, status, viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated, SAFE_METHODS
-from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
-# from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from recipes.models import Ingredient, IngredientRecipe, Favorite, Recipe, ShoppingCart, Tag
-
 from django.shortcuts import HttpResponse, get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
-# from .filters import TitlesFilter
-from .permissions import IsOwnerOrReadOnly
-from .serializers import (FavoriteSerializer, IngredientSerializer, RecipeSerializer, TagSerializer,
-                          RecipeCreationSerializer, ShoppingCartSerializer)
-from users.serializers import MiniRecipeSerializer
-from .pagination import CustomPagination
 from .filters import IngredientSearchFilter, RecipeFilter
+from .pagination import CustomPagination
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipeCreationSerializer, RecipeSerializer,
+                          ShoppingCartSerializer, TagSerializer)
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 
 
-class ListRetrieveViewSet(mixins.ListModelMixin, 
+class ListRetrieveViewSet(mixins.ListModelMixin,
                           mixins.RetrieveModelMixin,
                           viewsets.GenericViewSet):
     pass
 
 
 class TagViewSet(ListRetrieveViewSet):
+    """ Вьюсет на просмотр тегов."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (AllowAny,)
 
 
 class IngredientViewSet(ListRetrieveViewSet):
+    """ Вьюсет на простмотр ингридиентов. """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (AllowAny,)
@@ -41,26 +40,25 @@ class IngredientViewSet(ListRetrieveViewSet):
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
+    """ Вьюсет рецептов. """
     queryset = Recipe.objects.all()
     permission_classes = [IsOwnerOrReadOnly,]
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return RecipeSerializer
         return RecipeCreationSerializer
 
-# ## работает
     @action(
         detail=True,
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated]
     )
-
     def favorite(self, request, pk):
+        """ Добавление и удаление рецептов в избранное. """
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
@@ -77,14 +75,13 @@ class RecipesViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT
         )
 
-## работает.
     @action(
         detail=True,
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated]
     )
-
     def shopping_cart(self, request, pk):
+        """ Добавление и удаление рецептов в список покупок. """
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
@@ -100,7 +97,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'Рецепт успешно удалён из списка покупок.',
             status=status.HTTP_204_NO_CONTENT
         )
-  
+
     @action(
         detail=False,
         methods=['get'],
@@ -120,6 +117,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             amount = ingredient['ingredients_amount']
             shopping_list.append(f'\n{name} - {amount}, {unit}')
         response = HttpResponse(shopping_list, content_type='text/plain')
-        response['Content-Disposition'] = \
+        response['Content-Disposition'] = (
             'attachment; filename="shopping_cart.txt"'
+        )
         return response

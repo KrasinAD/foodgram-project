@@ -1,11 +1,7 @@
 import os
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# USERNAME_CHARACTERS = 50
-NAME_LENGTH = 200
 
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
@@ -62,7 +58,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-if DEBUG == True:
+if DEBUG is True:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

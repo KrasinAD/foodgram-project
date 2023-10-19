@@ -1,12 +1,12 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers, status
 
+from .models import Follow, User
 from recipes.models import Recipe
-from users.models import Follow, User
 
 
 class CustomUserSerializer(UserSerializer):
-    """Кастомный серилизатор для User, добавляет строчку подписки."""
+    """Кастомный сериализатор для User, добавляет строку подписки."""
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -20,52 +20,10 @@ class CustomUserSerializer(UserSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return Follow.objects.filter(user=request.user, following=obj).exists()
- 
 
-# class FollowSerializer(serializers.ModelSerializer):
-#     """Серилизатор User для подписок."""
-#     email = serializers.ReadOnlyField(source='following.email')
-#     id = serializers.ReadOnlyField(source='following.id')
-#     username = serializers.ReadOnlyField(source='following.username')
-#     first_name = serializers.ReadOnlyField(source='following.first_name')
-#     last_name = serializers.ReadOnlyField(source='following.last_name')
-#     is_subscribed = serializers.SerializerMethodField(read_only=True)
-#     recipes = serializers.SerializerMethodField()
-#     recipes_count = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Follow
-#         fields = ('email', 'id', 'username', 'first_name', 'last_name',
-#                   'is_subscribed', 'recipes', 'recipes_count')
-
-#     def get_is_subscribed(self, obj):
-#         # user = self.context.get('request').user
-#         # if not user.is_anonymous:
-#         #     return Follow.objects.filter(
-#         #         user=user,
-#         #         following=obj
-#         #     ).exists()
-#         # return False
-#         return True
-
-#     def get_recipes(self, obj):
-#         request = self.context.get('request')
-#         limit = request.query_params.get('recipes_limit')
-#         recipes = Recipe.objects.filter(author=obj)
-#         if limit and limit.isdigit():
-#             recipes = recipes[:int(limit)]
-#         return MiniRecipeSerializer(recipes, many=True).data
-
-#     def get_recipes_count(self, obj):
-#         return Recipe.objects.filter(author=obj).count()
 
 class FollowListSerializer(serializers.ModelSerializer):
-    """Серилизатор User для подписок."""
-    # email = serializers.ReadOnlyField(source='following.email')
-    # id = serializers.ReadOnlyField(source='following.id')
-    # username = serializers.ReadOnlyField(source='following.username')
-    # first_name = serializers.ReadOnlyField(source='following.first_name')
-    # last_name = serializers.ReadOnlyField(source='following.last_name')
+    """ Сериализатор для User добавляет подписки, рецепты и их кол-во. """
     is_subscribed = serializers.SerializerMethodField(read_only=True)
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -80,15 +38,6 @@ class FollowListSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return Follow.objects.filter(user=user, following=obj).exists()
-
-        # user = self.context.get('request').user
-        # if not request.user.is_anonymous:
-        #     return Follow.objects.filter(
-        #         user=request.user,
-        #         following=obj
-        #     ).exists()
-        # return False
-        # return True
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -113,7 +62,7 @@ class FollowSerializer(serializers.ModelSerializer):
             instance.following,
             context={'request': self.context.get('request')}
         ).data
-    
+
     def validate(self, data):
         user = self.context.get('request').user
         following = self.context.get('following')
@@ -129,8 +78,8 @@ class FollowSerializer(serializers.ModelSerializer):
 
 
 class MiniRecipeSerializer(serializers.ModelSerializer):
-    """Серилизатор для отображения рецептов в подписках, избранном и 
-    списке покупок."""
+    """ Сериализатор для отображения рецептов в подписках, избранном и
+    списке покупок. """
 
     class Meta:
         model = Recipe
