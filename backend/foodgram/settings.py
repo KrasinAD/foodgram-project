@@ -10,8 +10,8 @@ NAME_LENGTH = 200
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1 localhost').split()
 
@@ -122,9 +122,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    # 'DEFAULT_PAGINATION_CLASS':
-    #     'rest_framework.pagination.LimitOffsetPagination',
-    # 'PAGE_SIZE': 6,
 }
 
 AUTH_USER_MODEL = 'users.User'
