@@ -42,7 +42,7 @@ class IngredientViewSet(ListRetrieveViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     """ Вьюсет рецептов. """
     queryset = Recipe.objects.all()
-    permission_classes = [IsOwnerOrReadOnly,]
+    permission_classes = [IsOwnerOrReadOnly]
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter

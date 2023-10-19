@@ -66,7 +66,7 @@ class Recipe(models.Model):
     )
     cooking_time = models.IntegerField(
         'Время приготовления (в минутах)',
-        validators=[MinValueValidator(1, 'Минимальное время приготовления'),]
+        validators=[MinValueValidator(1, 'Минимальное время приготовления')]
     )
     author = models.ForeignKey(
         User,
@@ -118,7 +118,7 @@ class IngredientRecipe(models.Model):
         validators=[MinValueValidator(
             1,
             'Минимальное количество ингредиента в рецепте'
-        ),]
+        )]
     )
 
     class Meta:
