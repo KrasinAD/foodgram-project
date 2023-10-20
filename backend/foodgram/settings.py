@@ -6,8 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
-DEBUG = True
-# DEBUG = False
+# DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1 localhost').split()
 
@@ -135,4 +135,4 @@ DJOSER = {
     },
 }
 
-CSRF_TRUSTED_ORIGINS = ['foodgram.krasindomain.ru']
+CSRF_TRUSTED_ORIGINS = ['https://foodgram.krasindomain.ru']
