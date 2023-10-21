@@ -19,7 +19,7 @@ class CustomUserSerializer(UserSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return Follow.objects.filter(user=request.user, following=obj).exists()
+        return request.user.follower.filter(following=obj).exists()
 
 
 class FollowListSerializer(serializers.ModelSerializer):
@@ -34,10 +34,10 @@ class FollowListSerializer(serializers.ModelSerializer):
                   'is_subscribed', 'recipes', 'recipes_count')
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
+        user = self.context['request'].user
         if user.is_anonymous:
             return False
-        return Follow.objects.filter(user=user, following=obj).exists()
+        return user.follower.filter(following=obj).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -64,7 +64,7 @@ class FollowSerializer(serializers.ModelSerializer):
         ).data
 
     def validate(self, data):
-        user = self.context.get('request').user
+        user = self.context['request'].user
         following = self.context.get('following')
         if Follow.objects.filter(user=user, following=following).exists():
             raise serializers.ValidationError(

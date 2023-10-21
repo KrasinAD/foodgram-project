@@ -11,12 +11,13 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    def __str__(self):
-        return self.username
-
     class Meta:
+        ordering = ['id']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
 
 
 class Follow(models.Model):
@@ -35,6 +36,7 @@ class Follow(models.Model):
     )
 
     class Meta:
+        ordering = ['-following_id']
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [

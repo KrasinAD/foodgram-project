@@ -1,4 +1,3 @@
-
 from django.db.models import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -69,7 +68,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        Favorite.objects.filter(user=user, recipe_id=recipe).delete()
+        user.favorites.filter(recipe_id=recipe).delete()
         return Response(
             'Рецепт успешно удалён из избранного.',
             status=status.HTTP_204_NO_CONTENT
@@ -92,7 +91,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        ShoppingCart.objects.filter(user=user, recipe_id=recipe).delete()
+        user.shopping_cart.filter(recipe_id=recipe).delete()
         return Response(
             'Рецепт успешно удалён из списка покупок.',
             status=status.HTTP_204_NO_CONTENT

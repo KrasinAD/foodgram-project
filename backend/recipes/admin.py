@@ -21,6 +21,11 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 
+class RecipeIngredientInline(admin.TabularInline):
+    model = IngredientRecipe
+    min_num = 1
+
+
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -28,11 +33,13 @@ class RecipeAdmin(admin.ModelAdmin):
         'image',
         'cooking_time',
         'author',
+        'pub_date',
         'in_favorite'
     )
     search_fields = ('name',)
     list_filter = ('name', 'author', 'tags',)
     empty_value_display = '-пусто-'
+    inlines = (RecipeIngredientInline, )
 
     def in_favorite(self, obj):
         return obj.favorites.all().count()

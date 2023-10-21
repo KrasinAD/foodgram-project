@@ -46,11 +46,10 @@ class CustomUserViewSet(UserViewSet):
                 data={'user': user.id, 'following': following.id},
                 context={'request': request}
             )
-            print(serializer)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        Follow.objects.filter(user_id=user, following_id=following).delete()
+        user.follower.filter(following_id=following).delete()
         return Response(
             'Подписка удалена.',
             status=status.HTTP_204_NO_CONTENT
