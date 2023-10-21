@@ -167,7 +167,7 @@ class RecipeCreationSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         instance.tags.add(*tags)
         instance.ingredients.clear()
-        self.add_ingredients(ingredients, recipe=instance)
+        self.add_ingredients(ingredients=ingredients, recipe=instance)
         instance.save()
         return instance
 
