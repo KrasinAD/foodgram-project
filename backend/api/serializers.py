@@ -195,7 +195,6 @@ class RecipeCreationSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     'Ингридиенты должны быть уникальными'
                 )
-            ingredient_list.append(ingredient)
         return data
 
 
