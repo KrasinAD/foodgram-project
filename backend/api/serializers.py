@@ -5,8 +5,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
 
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Tag, MIN_VALUE, MAX_VALUE)
+from recipes.models import (MAX_VALUE, MIN_VALUE, Favorite, Ingredient,
+                            IngredientRecipe, Recipe, ShoppingCart, Tag)
 from users.serializers import CustomUserSerializer, MiniRecipeSerializer
 
 
@@ -44,6 +44,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     """ Сериализатор ингидиентов. """
+
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
@@ -69,7 +70,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         required=True,
         validators=[
             MinValueValidator(
-                MIN_VALUE,'Минимальное количество ингредиента в рецепте.'
+                MIN_VALUE, 'Минимальное количество ингредиента в рецепте.'
             ),
             MaxValueValidator(
                 MAX_VALUE, 'Максимальное количество ингредиента в рецепте.'
@@ -135,7 +136,7 @@ class RecipeCreationSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
-    def add_ingredient(self, ingredients, recipe):
+    def add_ingredients(self, ingredients, recipe):
         for ingredient in ingredients:
             IngredientRecipe.objects.bulk_create([
                 IngredientRecipe(
@@ -151,7 +152,7 @@ class RecipeCreationSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(author=user, **validated_data)
         recipe.tags.add(*tags)
-        self.add_ingredient(ingredients, recipe)
+        self.add_ingredients(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
@@ -166,7 +167,7 @@ class RecipeCreationSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         instance.tags.add(*tags)
         instance.ingredients.clear()
-        self.add_ingredient(ingredients, recipe=instance)
+        self.add_ingredients(ingredients, recipe=instance)
         instance.save()
         return instance
 

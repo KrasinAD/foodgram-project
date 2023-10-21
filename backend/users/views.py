@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Follow, User
+from .models import User
 from .serializers import (CustomUserSerializer, FollowListSerializer,
                           FollowSerializer)
 from api.pagination import CustomPagination

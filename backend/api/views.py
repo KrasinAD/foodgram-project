@@ -12,8 +12,7 @@ from .permissions import IsOwnerOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeCreationSerializer, RecipeSerializer,
                           ShoppingCartSerializer, TagSerializer)
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
 
 
 class ListRetrieveViewSet(mixins.ListModelMixin,

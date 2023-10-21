@@ -66,7 +66,7 @@ class FollowSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context['request'].user
         following = self.context.get('following')
-        if Follow.objects.filter(user=user, following=following).exists():
+        if user.follower.filter(following=following).exists():
             raise serializers.ValidationError(
                 detail='Вы уже подписаны на этого пользователя!',
                 code=status.HTTP_400_BAD_REQUEST)
