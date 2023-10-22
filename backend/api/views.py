@@ -112,7 +112,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         for ingredient in ingredients:
             name = ingredient['ingredients__name']
             unit = ingredient['ingredients__measurement_unit']
-            amount = ingredient['ingredients_amount']
+            amount = ingredient['ingredient_amount']
             shopping_list.append(f'\n{name} - {amount}, {unit}')
         response = HttpResponse(shopping_list, content_type='text/plain')
         response['Content-Disposition'] = (
