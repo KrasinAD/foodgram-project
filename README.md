@@ -5,7 +5,7 @@ Cайт Foodgram, «Продуктовый помощник». Онлайн-се
 
 Сайт проекта - https://foodgram.krasindomain.ru/
 
-## Технологии
+## Технологии:
 - Python 3.10
 - Django 4.2
 - Django REST Framework 3.14
