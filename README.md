@@ -40,6 +40,7 @@ docker compose exec backend python manage.py createsuperuser
 6. Соберите статику backend:
 ```
 docker compose exec backend python manage.py collectstatic
+sudo docker compose exec backend cp -r /app/static/. /static/
 ```
 7. Загрузите в базу данных ингредиенты и теги:
 ```
@@ -47,7 +48,7 @@ docker compose exec backend python manage.py load_data
 ```
 8. Перейдите на сайт:
 ```
-https://localhost:8888
+https://localhost:8888/
 ```
 
 ## Запустить проект на удаленном сервере:
@@ -61,7 +62,7 @@ sudo apt-get install docker-compose-plugin              - последняя в�
 ```
 2. Скопировать на сервер файлы docker-compose.production.yml, nginx.conf из папки infra (команды выполнять находясь в папке infra):
 ```
-scp docker-compose.yml nginx.conf username@IP:/home/username/
+scp ddocker-compose.production.yml nginx.conf username@IP:/home/username/
 
 # username - имя пользователя на сервере
 # IP - публичный IP сервера
@@ -89,28 +90,29 @@ DB_PORT                 - 5432 (порт по умолчанию)
 
 4. Создать и запустить контейнеры Docker, выполнить команду на сервере:
 ```
-sudo docker compose up -d
+sudo docker compose -f docker-compose.production.yml up -d
 ```
 5. Выполнить миграции:
 ```
-sudo docker compose exec backend python manage.py migrate
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
 ```
 6. Собрать статику:
 ```
-sudo docker compose exec backend python manage.py collectstatic
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/static/. /static/ 
 ```
 7. Загрузите в базу данных ингредиенты и теги:
 ```
-sudo docker compose exec backend python manage.py load_data 
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_data 
 ```
 8. Создать суперпользователя:
 ```
-sudo docker compose exec backend python manage.py createsuperuser
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
 ```
 9. Для остановки контейнеров Docker:
 ```
-sudo docker compose down -v      - с их удалением
-sudo docker compose stop         - без удаления
+sudo docker compose -f docker-compose.production.yml down -v      - с их удалением
+sudo docker compose -f docker-compose.production.yml stop         - без удаления
 ```
 
 ### После каждого обновления репозитория (push в ветку master) будет происходить:
